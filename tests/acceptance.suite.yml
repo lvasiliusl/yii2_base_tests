@@ -1,5 +1,4 @@
 class_name: AcceptanceTester
-# actor: AcceptanceTester
 paths:
   tests: tests
   support: tests/_support
