@@ -14,3 +14,4 @@ modules:
         url: http://test.me.loc
       Yii2:
         part: init
+        cleanup: false

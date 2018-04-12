@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Url;
+use \Codeception\Util\Debug;
 
 /**
  *
@@ -9,7 +10,14 @@ class TableCest
 {
   public function _before(\AcceptanceTester $I)
   {
-    $I->amOnPage(Url::toRoute('/table'));
+    /* Login for access to table page */
+    $I->amOnPage(Url::toRoute('/site/login'));
+    $I->see('Login', 'h1');
+
+    $I->amGoingTo('try to login with correct credentials');
+    $I->fillField('input[name="LoginForm[username]"]', 'admin');
+    $I->fillField('input[name="LoginForm[password]"]', 'admin');
+    $I->click('login-button');
   }
 
   public function tablePageWorks(AcceptanceTester $I)
@@ -20,23 +28,29 @@ class TableCest
 
   public function ensureThatTableCorrect(AcceptanceTester $I)
   {
-    $I->amGoingTo('check table data');
+    $table_col = [];
+    $table_cels = [];
+    $table_rows = [];
 
-    /* Check tabe content */
-    for ($i=0; $i < 5; $i++) {
-      for ($x=0; $x < 4; $x++) {
-        // Check cells number from data attribute
-        if ($x === 0) {
-          // Check the data of the first cell
-          $cell_number = (int)$I->grabAttributeFrom('.table-row-'.$i.' .table-col-'.$x, 'data');
-          $I->assertGreaterThanOrEqual(30, $cell_number, 'First cell number must be greater than 30.');
-        } else {
-          // Check the data of the all next cells
-          $current_cell_number = (int)$I->grabAttributeFrom('.table-row-'.$i.' .table-col-'.$x, 'data');
-          $previous_cell_number = (int)$I->grabAttributeFrom('.table-row-'.$i.' .table-col-'.($x-1), 'data');
-          $I->assertEquals($previous_cell_number*2, $current_cell_number, 'Cell number must be twice the previous.');
+    $I->amGoingTo('check table data');
+    $table_rows = $I->grabMultiple('tr.table-row');
+
+    foreach ($table_rows as $key => $value) {
+      $table_col = explode('  ', $value);
+
+      foreach ($table_col as $key => $val) {
+        // Build current row cels array
+        $table_cels[] = (int)trim($val);
+      }
+
+      $I->assertGreaterThanOrEqual(30, (int)$table_cels[0], 'First cell number must be greater than 30.');
+      for ($i=0; $i < count($table_cels); $i++) {
+        if ($i > 0) {
+          $I->assertEquals($table_cels[$i-1]*2, $table_cels[$i], 'Cell number must be twice the previous.');
         }
       }
+      // Erase current row cels array
+      $table_cels = [];
     }
 
   }
