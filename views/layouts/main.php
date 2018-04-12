@@ -39,10 +39,15 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Table page', 'url' => ['/table']],
+            // ['label' => 'Table page', 'url' => ['/table']],
             ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'About', 'url' => ['/site/about']],
             ['label' => 'Contact', 'url' => ['/site/contact']],
+
+            /* Show links if user logged in */
+            Yii::$app->user->isGuest ? '' :
+              (['label' => 'Table page', 'url' => ['/table']]),
+
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (

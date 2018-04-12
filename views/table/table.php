@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 
 use yii\helpers\Html;
+use yii\widgets\ListView;
 
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -10,13 +11,14 @@ $this->params['breadcrumbs'][] = $this->title;
 <hr>
 
 <div class="table-wrap col-md-6">
-  <table class="table table-bordered">
-    <?php for ($i=0; $i < 5; $i++): ?>
-      <tr class="table-row-<?= $i ?>">
-      <?php for ($x=0; $x < 4; $x++): ?>
-          <td class="table-col-<?= $x ?>" data="<?= $random_int[$i][$x]; ?>"><?= $random_int[$i][$x]; ?></td>
-      <?php endfor; ?>
-      </tr>
-    <?php endfor; ?>
-  </table>
+  <?php echo ListView::widget([
+    'dataProvider' => $dataProvider,
+    'summary'=>'',
+    'itemView' => '_row',
+    'options' => [
+      'tag' => 'table',
+      'class' => 'table table-bordered',
+    ],
+  ]);
+  ?>
 </div>

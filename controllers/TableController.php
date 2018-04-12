@@ -3,8 +3,9 @@
 namespace app\controllers;
 
 use Yii;
-use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\data\ArrayDataProvider;
+use yii\filters\AccessControl;
 
 class TableController extends Controller
 {
@@ -16,10 +17,9 @@ class TableController extends Controller
     return [
       'access' => [
         'class' => AccessControl::className(),
-        'only' => ['logout'],
         'rules' => [
           [
-            'actions' => ['logout'],
+            'actions' => ['index'],
             'allow' => true,
             'roles' => ['@'],
           ],
@@ -33,6 +33,7 @@ class TableController extends Controller
    */
   public function actionIndex()
   {
+
     // Build array
     for($i = 0; $i < 5; $i++){
       $random_int[$i][] = random_int(30, 60);
@@ -43,10 +44,17 @@ class TableController extends Controller
       }
     }
 
+    // Build data provider
+    $dataProvider = new ArrayDataProvider([
+      'allModels' => $random_int,
+      'pagination' => false,
+    ]);
+
     Yii::$app->view->title = 'Table page';
 
     return $this->render('table', [
       'random_int' => $random_int,
+      'dataProvider' => $dataProvider,
     ]);
   }
 }
